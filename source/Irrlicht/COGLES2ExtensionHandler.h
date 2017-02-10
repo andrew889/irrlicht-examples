@@ -281,6 +281,38 @@ namespace video
 		{
 			glFramebufferTexture2D(target, attachment, textarget, texture, level);
 		}
+        
+        
+        inline void irrGlBindRenderbuffer(GLenum target, GLuint renderbuffer)
+        {
+            glBindRenderbuffer(target, renderbuffer);
+        }
+        
+        inline void irrGlDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
+        {
+
+            glDeleteRenderbuffers(n, renderbuffers);
+        }
+        
+        inline void irrGlGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
+        {
+            if (renderbuffers)
+                memset(renderbuffers,0,n*sizeof(GLuint));
+
+            glGenRenderbuffers(n, renderbuffers);
+        }
+        
+        inline void irrGlRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+        {
+
+            glRenderbufferStorage(target, internalformat, width, height);
+
+        }
+        
+        inline void irrGlFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+        {
+            glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+        }
 
 		inline void irrGlGenerateMipmap(GLenum target)
 		{

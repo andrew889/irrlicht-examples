@@ -2374,6 +2374,8 @@ COGLES2Driver::~COGLES2Driver()
 
 		return renderTargetTexture;
 	}
+    
+    
 
 
 	//! Returns the maximum amount of primitives

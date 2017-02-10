@@ -19,7 +19,7 @@ namespace video
 class COpenGLCoreFeature
 {
 public:
-	COpenGLCoreFeature() : BlendOperation(false), ColorAttachment(0), MultipleRenderTarget(0), TextureUnit(1)
+    COpenGLCoreFeature() : BlendOperation(false), ColorAttachment(0), MultipleRenderTarget(0), TextureUnit(1)
 	{
 	}
 

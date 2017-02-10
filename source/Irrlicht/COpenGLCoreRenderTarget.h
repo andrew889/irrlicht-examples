@@ -10,8 +10,22 @@
 #if defined(_IRR_COMPILE_WITH_OPENGL_) || defined(_IRR_COMPILE_WITH_OGLES1_) || defined(_IRR_COMPILE_WITH_OGLES2_)
 
 #include "IRenderTarget.h"
+
+#if defined(_IRR_COMPILE_WITH_IOS_DEVICE_)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+#elif defined(_IRR_COMPILE_WITH_ANDROID_DEVICE_)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <EGL/eglplatform.h>
+#else
+#include <GLES2/gl2.h>
+#include <EGL/eglplatform.h>
+typedef char GLchar;
+#if defined(_IRR_OGLES2_USE_EXTPOINTER_)
+#include "gles2-ext.h"
+#endif
+#endif
 
 namespace irr
 {
@@ -87,6 +101,9 @@ public:
 				}
 
 				Texture.set_used(core::min_(texture.size(), static_cast<u32>(ColorAttachment)));
+                
+                if(Texture.size() > StorageType.size())
+                    StorageType.set_used(Texture.size());
 
 				for (u32 i = 0; i < Texture.size(); ++i)
 				{
@@ -106,6 +123,7 @@ public:
 					{
 						Texture[i] = texture[i];
 						Texture[i]->grab();
+                        StorageType[i] = 0;         // set this to be a texture storage
 					}
 					else
 					{
@@ -138,6 +156,7 @@ public:
 				{
 					DepthStencil = depthStencil;
 					DepthStencil->grab();
+                    DepthStencilType = 0;       // depth storage is a texture (does not work on iOS)
 				}
 				else
 				{
@@ -165,6 +184,40 @@ public:
 			}
 		}
 	}
+    
+    virtual void createBuffers(const core::array<bool>& buffers, bool depth) _IRR_OVERRIDE_
+    {
+        for(int i=0;i<buffers.size();i++)
+        {
+            if(buffers[i])
+            {
+                StorageType[i] = 1;         // set this colour tex index to be a renderbuffer
+                
+                GLuint colorRenderBuffer;
+                Driver->irrGlGenRenderbuffers(1, &colorRenderBuffer);
+                Driver->irrGlBindRenderbuffer(GL_RENDERBUFFER, colorRenderBuffer);
+                Driver->irrGlRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, Size.Width, Size.Height);
+                
+                Buffer[i] = colorRenderBuffer;
+                
+                RequestTextureUpdate = true;
+            }
+        }
+        
+        if(depth)
+        {
+            DepthStencilType = 1;           // set depth to be a renderbuffer
+            
+            GLuint depthRenderBuffer;
+            Driver->irrGlGenRenderbuffers(1, &depthRenderBuffer);
+            Driver->irrGlBindRenderbuffer(GL_RENDERBUFFER, depthRenderBuffer);
+            Driver->irrGlRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, Size.Width, Size.Height);
+            
+            DepthStencilBuffer = depthRenderBuffer;
+            
+            RequestDepthStencilUpdate = true;
+        }
+    }
 
 	void update()
 	{
@@ -176,24 +229,48 @@ public:
 			{
 				// Set new color textures.
 
-				const u32 textureSize = core::min_(Texture.size(), AssignedTexture.size());
+				//const u32 textureSize = core::min_(Texture.size(), AssignedTexture.size());
 
+                const u32 textureSize = StorageType.size();
+
+                
 				for (u32 i = 0; i < textureSize; ++i)
 				{
-					GLuint textureID = (Texture[i]) ? static_cast<TOpenGLTexture*>(Texture[i])->getOpenGLTextureName() : 0;
+                    if(StorageType[i] == 0)
+                    {
+                        GLuint textureID = (Texture[i]) ? static_cast<TOpenGLTexture*>(Texture[i])->getOpenGLTextureName() : 0;
 
-					if (textureID != 0)
-					{
-						AssignedTexture[i] = GL_COLOR_ATTACHMENT0 + i;
-						Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, AssignedTexture[i], GL_TEXTURE_2D, textureID, 0);
-					}
-					else if (AssignedTexture[i] != GL_NONE)
-					{
-						AssignedTexture[i] = GL_NONE;
-						Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, AssignedTexture[i], GL_TEXTURE_2D, 0, 0);
+                        if (textureID != 0)
+                        {
+                            AssignedTexture[i] = GL_COLOR_ATTACHMENT0 + i;
+                            Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, AssignedTexture[i], GL_TEXTURE_2D, textureID, 0);
+                        }
+                        else if (AssignedTexture[i] != GL_NONE)
+                        {
+                            AssignedTexture[i] = GL_NONE;
+                            Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, AssignedTexture[i], GL_TEXTURE_2D, 0, 0);
 
-						os::Printer::log("Error: Could not set render target.", ELL_ERROR);
-					}
+                            os::Printer::log("Error: Could not set render target.", ELL_ERROR);
+                        }
+                    }
+                    else
+                    {
+                        GLuint renderbufferID = Buffer[i];
+                        GLuint position = GL_COLOR_ATTACHMENT0 + i;
+                        
+                        if(renderbufferID == 0)
+                        {
+                            Driver->irrGlGenRenderbuffers(1, &renderbufferID);
+                            Driver->irrGlBindRenderbuffer(GL_RENDERBUFFER, renderbufferID);
+                            Driver->irrGlRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, Size.Width, Size.Height);
+                            
+                            
+                            Buffer[i] = renderbufferID;
+                        }
+                        
+                        Driver->irrGlFramebufferRenderbuffer(GL_FRAMEBUFFER, position, GL_RENDERBUFFER, renderbufferID);
+                        
+                    }
 				}
 
 				// Reset other render target channels.
@@ -214,12 +291,15 @@ public:
 
 			if (RequestDepthStencilUpdate)
 			{
-				const ECOLOR_FORMAT textureFormat = (DepthStencil) ? DepthStencil->getColorFormat() : ECF_UNKNOWN;
+                
+                if(DepthStencilType == 0)
+                {
+                    const ECOLOR_FORMAT textureFormat = (DepthStencil) ? DepthStencil->getColorFormat() : ECF_UNKNOWN;
 
-				if (IImage::isDepthFormat(textureFormat))
-				{
-					GLuint textureID = static_cast<TOpenGLTexture*>(DepthStencil)->getOpenGLTextureName();
-
+                    if (IImage::isDepthFormat(textureFormat))
+                    {
+                        GLuint textureID = static_cast<TOpenGLTexture*>(DepthStencil)->getOpenGLTextureName();
+                        
 					Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
 
 					if (textureFormat == ECF_D24S8)
@@ -237,18 +317,35 @@ public:
 					}
 
 					AssignedDepth = true;
-				}
-				else
-				{
-					if (AssignedDepth)
-						Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+                    }
+                    else
+                    {
+                        if (AssignedDepth)
+                            Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
 
-					if (AssignedStencil)
+                        if (AssignedStencil)
 						Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
 
-					AssignedDepth = false;
-					AssignedStencil = false;
-				}
+                        AssignedDepth = false;
+                        AssignedStencil = false;
+                    }
+                }
+                else
+                {
+                    GLuint depthRenderBufferID = DepthStencilBuffer;
+                    
+                    if(depthRenderBufferID == 0)
+                    {
+                        Driver->irrGlGenRenderbuffers(1, &depthRenderBufferID);
+                        Driver->irrGlBindRenderbuffer(GL_RENDERBUFFER, depthRenderBufferID);
+                        Driver->irrGlRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, Size.Width, Size.Height);
+                        
+                        
+                        DepthStencilBuffer = depthRenderBufferID;
+                    }
+                    
+                    Driver->irrGlFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderBufferID);
+                }
 
 				RequestDepthStencilUpdate = false;
 			}
@@ -352,7 +449,7 @@ protected:
 
 	u32 ColorAttachment;
 	u32 MultipleRenderTarget;
-
+    
 	TOpenGLDriver* Driver;
 };
 

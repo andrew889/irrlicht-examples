@@ -613,6 +613,8 @@
 		5E79089B1C10FEF900DFE7FE /* CB3DMeshWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E7908981C10FE4A00DFE7FE /* CB3DMeshWriter.cpp */; };
 		5E8570BC1B7F9AC400B267D2 /* CIrrDeviceConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E8570BA1B7F9AC400B267D2 /* CIrrDeviceConsole.cpp */; };
 		5E9573D71C18E9E600C27989 /* CEAGLManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E9573D61C18E9E600C27989 /* CEAGLManager.mm */; };
+		BE3C8CAD1E4CEF0900286109 /* COpenGLCoreRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E79088F1C10EE6700DFE7FE /* COpenGLCoreRenderTarget.h */; };
+		BE3C8CAE1E4CEF0A00286109 /* COpenGLCoreRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E79088F1C10EE6700DFE7FE /* COpenGLCoreRenderTarget.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -2445,6 +2447,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE3C8CAE1E4CEF0A00286109 /* COpenGLCoreRenderTarget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2452,6 +2455,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE3C8CAD1E4CEF0900286109 /* COpenGLCoreRenderTarget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

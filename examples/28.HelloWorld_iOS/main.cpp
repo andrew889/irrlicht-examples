@@ -57,12 +57,27 @@ void irrlicht_main()
     scene::ICameraSceneNode* fixedCam = 0;
     
     renderTargetTex = driver->addRenderTargetTexture(core::dimension2d<u32>(512, 512), "RTT1", video::ECF_R8G8B8);
-    video::ITexture* renderTargetDepth = driver->addRenderTargetTexture(core::dimension2d<u32>(512, 512), "DepthStencil", video::ECF_D16);
+    
+    // video::ITexture* renderTargetDepth = driver->addRenderTargetTexture(core::dimension2d<u32>(64, 64), "DepthStencil", video::ECF_D16);
+    
     
     renderTarget = driver->addRenderTarget();
-    renderTarget->setTexture(0, renderTargetDepth);  // DOESN'T WORK WITH DEPTH TEXTURE!!
     
-    test->setMaterialTexture(0, renderTargetTex); // set material of cube to render target
+    // set image storage to be a usable texture
+    // You need to do this first, so any renderbuffers know what size they need to be
+    // (alternatively, use setDimensions to pre-empt it)
+    renderTarget->setTexture(renderTargetTex,0);
+    
+    // now set depth storage to be a depth renderbuffer
+    // make an array which tells it which image storages need to be renderbuffers (none here)
+    // the latter parameter is if the depth storage is a renderbuffer
+    core::array<bool> bufferArray(1);
+    bufferArray.push_back(false);
+    renderTarget->createBuffers(bufferArray,true);
+    
+    // finally, set the material of the cube to be the image storage of the rendertarget
+    test->setMaterialTexture(0, renderTargetTex);
+    
     
     auto string = glGetString(GL_EXTENSIONS);
     
