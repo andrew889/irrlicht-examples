@@ -52,36 +52,21 @@ void irrlicht_main()
     anim->drop();
     
     // create render target
-    video::IRenderTarget* renderTarget = 0;
-    video::ITexture* renderTargetTex = 0;
     scene::ICameraSceneNode* fixedCam = 0;
     
-    renderTargetTex = driver->addRenderTargetTexture(core::dimension2d<u32>(512, 512), "RTT1", video::ECF_R8G8B8);
+    auto size = core::dimension2d<u32>(512, 512);
+    auto renderTargetTex = driver->addRenderTargetTexture(core::dimension2d<u32>(512, 512), "RTT1", video::ECF_R8G8B8);
+    auto renderTargetDepth = driver->addRenderTargetBuffer(size, ECF_D24S8);
     
-    // video::ITexture* renderTargetDepth = driver->addRenderTargetTexture(core::dimension2d<u32>(64, 64), "DepthStencil", video::ECF_D16);
-    
-    
-    renderTarget = driver->addRenderTarget();
+    auto renderTarget = driver->addRenderTarget();
     
     // set image storage to be a usable texture
     // You need to do this first, so any renderbuffers know what size they need to be
     // (alternatively, use setDimensions to pre-empt it)
-    renderTarget->setTexture(renderTargetTex,0);
-    
-    // now set depth storage to be a depth renderbuffer
-    // make an array which tells it which image storages need to be renderbuffers (none here)
-    // the latter parameter is if the depth storage is a renderbuffer
-    core::array<bool> bufferArray(1);
-    bufferArray.push_back(false);
-    renderTarget->createBuffers(bufferArray,true);
+    renderTarget->setAttachment(renderTargetTex, renderTargetDepth);
     
     // finally, set the material of the cube to be the image storage of the rendertarget
     test->setMaterialTexture(0, renderTargetTex);
-    
-    
-    auto string = glGetString(GL_EXTENSIONS);
-    
-//    cout << string << endl;
     
     // add fixed camera
     fixedCam = smgr->addCameraSceneNode(0, core::vector3df(0,0,-180));
@@ -95,6 +80,7 @@ void irrlicht_main()
     sprite.getMaterial(0).setTexture(0, driver->getTexture(mediaPath + "axe.jpg"));
     auto rotanim = smgr->createRotationAnimator(vector3df { 0, 0, 0.5 });
     sprite.addAnimator(rotanim);
+    sprite.remove();
     
     while(device->run())
         if (device->isWindowActive())
@@ -110,8 +96,11 @@ void irrlicht_main()
             test->setVisible(false);
             smgr->setActiveCamera(fixedCam);
         
+            sprite.render();
+            
             // draw whole scene into render buffer
             smgr->drawAll();
+            
             
             // set back old render target
             // The buffer might have been distorted, so clear it

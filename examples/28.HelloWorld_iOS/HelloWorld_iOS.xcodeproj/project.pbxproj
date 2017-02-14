@@ -123,7 +123,7 @@
 				TargetAttributes = {
 					5E6AC1671C1DA6CF00DADD92 = {
 						CreatedOnToolsVersion = 7.1.1;
-						DevelopmentTeam = 7L223QJJL3;
+						DevelopmentTeam = S2G5LG6898;
 					};
 				};
 			};
@@ -259,7 +259,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 7L223QJJL3;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S2G5LG6898;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../include";
 				INFOPLIST_FILE = "$(SRCROOT)/../../media/info_ios.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
@@ -275,7 +276,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = 7L223QJJL3;
+				DEVELOPMENT_TEAM = S2G5LG6898;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../include";
 				INFOPLIST_FILE = "$(SRCROOT)/../../media/info_ios.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;

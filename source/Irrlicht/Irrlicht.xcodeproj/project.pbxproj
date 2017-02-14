@@ -1368,6 +1368,9 @@
 		5E9573D31C18E9B300C27989 /* CEAGLManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEAGLManager.h; sourceTree = "<group>"; };
 		5E9573D61C18E9E600C27989 /* CEAGLManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CEAGLManager.mm; sourceTree = "<group>"; };
 		5EC24F5E1B8B861200DCA615 /* exampleHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = exampleHelper.h; path = ../../include/exampleHelper.h; sourceTree = "<group>"; };
+		A1C3D6851E4E4C1700448D34 /* COpenGLCoreRenderTargetAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COpenGLCoreRenderTargetAttachment.h; sourceTree = "<group>"; };
+		A1C3D6861E4E7CD600448D34 /* COpenGLCoreRenderBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COpenGLCoreRenderBuffer.h; sourceTree = "<group>"; };
+		A1ED7D201E523FC600197A82 /* IRenderTargetAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IRenderTargetAttachment.h; path = ../../include/IRenderTargetAttachment.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1594,6 +1597,7 @@
 				5E34C7381B7F4AFC00F212E8 /* IMaterialRenderer.h */,
 				5E34C7391B7F4AFC00F212E8 /* IMaterialRendererServices.h */,
 				5E79088A1C10EC6C00DFE7FE /* IRenderTarget.h */,
+				A1ED7D201E523FC600197A82 /* IRenderTargetAttachment.h */,
 				5E34C76F1B7F4AFC00F212E8 /* IShaderConstantSetCallBack.h */,
 				5E34C7741B7F4AFC00F212E8 /* ITexture.h */,
 				5E34C7781B7F4AFC00F212E8 /* IVideoDriver.h */,
@@ -2425,6 +2429,8 @@
 				5E79088E1C10EE6700DFE7FE /* COpenGLCoreFeature.h */,
 				5E79088F1C10EE6700DFE7FE /* COpenGLCoreRenderTarget.h */,
 				5E7908901C10EE6700DFE7FE /* COpenGLCoreTexture.h */,
+				A1C3D6851E4E4C1700448D34 /* COpenGLCoreRenderTargetAttachment.h */,
+				A1C3D6861E4E7CD600448D34 /* COpenGLCoreRenderBuffer.h */,
 			);
 			name = "OpenGL Core";
 			sourceTree = "<group>";
@@ -3189,6 +3195,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DSTROOT = "$(SRCROOT)/../../lib/OSX";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = lib;

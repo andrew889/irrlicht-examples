@@ -19,6 +19,7 @@
 #include "EDriverTypes.h"
 #include "EDriverFeatures.h"
 #include "SExposedVideoData.h"
+#include "os.h"
 
 namespace irr
 {
@@ -450,8 +451,23 @@ namespace video
 		IReferenceCounted::drop() for more information. */
 		virtual ITexture* addRenderTargetTexture(const core::dimension2d<u32>& size,
 				const io::path& name = "rt", const ECOLOR_FORMAT format = ECF_UNKNOWN) =0;
-
-		//! Removes a texture from the texture cache and deletes it.
+        
+        //! Adds a new render target texture to the texture cache.
+        /** \param size Size of the texture, in pixels. Width and
+         height should be a power of two (e.g. 64, 128, 256, 512, ...)
+         and it should not be bigger than the backbuffer, because it
+         shares the zbuffer with the screen buffer.
+         \param name An optional name for the RTT.
+         \param format The color format of the render target. Floating point formats are supported.
+         \return Pointer to the created texture or 0 if the texture
+         could not be created. This pointer should not be dropped. See
+         IReferenceCounted::drop() for more information. */
+        virtual IRenderTargetAttachment* addRenderTargetBuffer(const core::dimension2d<u32>& size, const ECOLOR_FORMAT format = ECF_UNKNOWN)  {
+            os::Printer::log("UNIMPLEMENTED", ELL_ERROR);
+            return NULL;
+        };
+        
+        //! Removes a texture from the texture cache and deletes it.
 		/** This method can free a lot of memory!
 		Please note that after calling this, the pointer to the
 		ITexture may no longer be valid, if it was not grabbed before

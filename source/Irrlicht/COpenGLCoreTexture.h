@@ -191,8 +191,47 @@ public:
 		for (u32 i = 0; i < Image.size(); ++i)
 			Image[i]->drop();
 	}
+    
+    virtual bool canRenderDepth() _IRR_OVERRIDE_
+    {
+#if defined(_IRR_COMPILE_WITH_IOS_DEVICE_)
+        os::Printer::log("This driver doesn't support textures as depth attachments.", ELL_WARNING);
+        return false;
+#endif
+        if(!this->getOpenGLTextureName())
+            return false;
 
-	virtual void* lock(E_TEXTURE_LOCK_MODE mode = ETLM_READ_WRITE, u32 layer = 0) _IRR_OVERRIDE_
+        if (this->getType() != ETT_2D) {
+            os::Printer::log("This driver doesn't support render to cubemaps.", ELL_WARNING);
+            return false;
+        }
+        
+        return IImage::isDepthFormat(this->getColorFormat());
+    }
+    
+#ifndef _IRR_COMPILE_WITH_IOS_DEVICE_
+    virtual void attachToCurrentFBOAsDepth()
+    {
+        Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, TextureName, 0);
+    }
+    
+    virtual void attachToCurrentFBOAsStencil()
+    {
+        Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, TextureName, 0);
+    }
+    
+    virtual void detachFromCurrentFBOAsDepth()
+    {
+        Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+    }
+    
+    virtual void detachFromCurrentFBOAsStencil()
+    {
+        Driver->irrGlFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+    }
+#endif
+    
+    virtual void* lock(E_TEXTURE_LOCK_MODE mode = ETLM_READ_WRITE, u32 layer = 0) _IRR_OVERRIDE_
 	{
 		if (LockImage)
 			return LockImage->getData();

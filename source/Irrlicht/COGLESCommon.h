@@ -108,16 +108,20 @@ namespace video
 
 	template <class TOpenGLDriver>
 	class COpenGLCoreTexture;
-
-	template <class TOpenGLDriver, class TOpenGLTexture>
-	class COpenGLCoreRenderTarget;
+    
+    template <class TOpenGLDriver>
+    class COpenGLCoreRenderBuffer;
+    
+    template <class TOpenGLDriver, class TOpenGLTexture, class TOpenGLRenderTargetAttachment>
+    class COpenGLCoreRenderTarget;
 
 	template <class TOpenGLDriver, class TOpenGLTexture>
 	class COpenGLCoreCacheHandler;
 
 	class COGLES1Driver;
 	typedef COpenGLCoreTexture<COGLES1Driver> COGLES1Texture;
-	typedef COpenGLCoreRenderTarget<COGLES1Driver, COGLES1Texture> COGLES1RenderTarget;
+    typedef COpenGLCoreRenderBuffer<COGLES1Driver> COGLES1RenderBuffer;
+    typedef COpenGLCoreRenderTarget<COGLES1Driver, COGLES1Texture, COGLES1RenderBuffer> COGLES1RenderTarget;
 	typedef COpenGLCoreCacheHandler<COGLES1Driver, COGLES1Texture> COGLES1CacheHandler;
 
 }
