@@ -11,6 +11,8 @@
 #include "EDriverTypes.h"
 #include "path.h"
 #include "matrix4.h"
+#include "IRenderTargetAttachment.h"
+
 
 namespace irr
 {
@@ -114,13 +116,14 @@ NULL device, their textures are compatible. If you try to use a texture
 created by one device with an other device, the device will refuse to do that
 and write a warning or an error message to the output buffer.
 */
-class ITexture : public virtual IReferenceCounted
+class ITexture : public virtual IRenderTargetAttachment
 {
 public:
 
 	//! constructor
-	ITexture(const io::path& name, E_TEXTURE_TYPE type) : NamedPath(name), DriverType(EDT_NULL), OriginalColorFormat(ECF_UNKNOWN),
-		ColorFormat(ECF_UNKNOWN), Pitch(0), HasMipMaps(false), IsRenderTarget(false), Source(ETS_UNKNOWN), Type(type)
+	ITexture(const io::path& name, E_TEXTURE_TYPE type) :
+        IRenderTargetAttachment(), NamedPath(name), OriginalColorFormat(ECF_UNKNOWN),
+        Pitch(0), HasMipMaps(false), IsRenderTarget(false), Source(ETS_UNKNOWN), Type(type)
 	{
 	}
 
@@ -170,21 +173,6 @@ public:
 	to know the real size it has now stored in the system.
 	\return The original size of the texture. */
 	const core::dimension2d<u32>& getOriginalSize() const { return OriginalSize; };
-
-	//! Get dimension (=size) of the texture.
-	/** \return The size of the texture. */
-	const core::dimension2d<u32>& getSize() const { return Size; };
-
-	//! Get driver type of texture.
-	/** This is the driver, which created the texture. This method is used
-	internally by the video devices, to check, if they may use a texture
-	because textures may be incompatible between different devices.
-	\return Driver type of texture. */
-	E_DRIVER_TYPE getDriverType() const { return DriverType; };
-
-	//! Get the color format of texture.
-	/** \return The color format of texture. */
-	ECOLOR_FORMAT getColorFormat() const { return ColorFormat; };
 
 	//! Get pitch of the main texture (in bytes).
 	/** The pitch is the amount of bytes used for a row of pixels in a
@@ -260,10 +248,7 @@ protected:
 
 	io::SNamedPath NamedPath;
 	core::dimension2d<u32> OriginalSize;
-	core::dimension2d<u32> Size;
-	E_DRIVER_TYPE DriverType;
 	ECOLOR_FORMAT OriginalColorFormat;
-	ECOLOR_FORMAT ColorFormat;
 	u32 Pitch;
 	bool HasMipMaps;
 	bool IsRenderTarget;

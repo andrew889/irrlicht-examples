@@ -184,8 +184,11 @@ namespace video
 
 	template <class TOpenGLDriver>
 	class COpenGLCoreTexture;
+    
+    template <class TOpenGLDriver>
+    class COpenGLCoreRenderBuffer;
 
-	template <class TOpenGLDriver, class TOpenGLTexture>
+	template <class TOpenGLDriver, class TOpenGLTexture, class TOpenGLRenderTargetAttachment>
 	class COpenGLCoreRenderTarget;
 
 	template <class TOpenGLDriver, class TOpenGLTexture>
@@ -193,7 +196,8 @@ namespace video
 
 	class COpenGLDriver;
 	typedef COpenGLCoreTexture<COpenGLDriver> COpenGLTexture;
-	typedef COpenGLCoreRenderTarget<COpenGLDriver, COpenGLTexture> COpenGLRenderTarget;
+    typedef COpenGLCoreRenderBuffer<COpenGLDriver> COpenGLRenderBuffer;
+	typedef COpenGLCoreRenderTarget<COpenGLDriver, COpenGLTexture, COpenGLRenderBuffer> COpenGLRenderTarget;
 	class COpenGLCacheHandler;
 
 }

@@ -10,6 +10,7 @@
 #ifdef _IRR_COMPILE_WITH_OGLES2_
 
 #include "COpenGLCoreTexture.h"
+#include "COpenGLCoreRenderBuffer.h"
 #include "COpenGLCoreRenderTarget.h"
 #include "COpenGLCoreCacheHandler.h"
 
@@ -2375,7 +2376,11 @@ COGLES2Driver::~COGLES2Driver()
 		return renderTargetTexture;
 	}
     
-    
+    IRenderTargetAttachment* COGLES2Driver::addRenderTargetBuffer(const core::dimension2d<u32>& size, const ECOLOR_FORMAT format)
+    {
+        IRenderTargetAttachment* attachement = new COGLES2RenderBuffer(size, format, this);
+        return attachement;
+    }
 
 
 	//! Returns the maximum amount of primitives

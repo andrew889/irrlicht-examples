@@ -7,6 +7,7 @@
 //
 
 #include "SpriteNode.hpp"
+#include <OpenGLES/ES2/gl.h>
 
 using namespace irr;
 using namespace scene;
@@ -87,7 +88,21 @@ void SpriteNode::render()
     
     driver->setMaterial(Material);
     driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
+    
+//    glEnable(GL_STENCIL_TEST);
+//    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+//    glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
+//    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+//    glStencilMask(0xFF);
+//    glClearStencil(200);
+//    glClear(GL_STENCIL_BUFFER_BIT);
+    
     driver->drawIndexedTriangleList(&Vertices[0], 4, &indices[0], 2);
+    
+//    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+//    glStencilMask(0x00);
+////    glDisable(GL_STENCIL_TEST);
+//    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 }
 
 /*
