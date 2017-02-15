@@ -3,6 +3,7 @@
 #include "SpriteNode.hpp"
 #include <iostream>
 #include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 using namespace irr;
 
@@ -85,22 +86,51 @@ void irrlicht_main()
     while(device->run())
         if (device->isWindowActive())
         {
-            driver->beginScene(video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(0));
+            driver->beginScene(video::ECBF_COLOR | video::ECBF_DEPTH | video::ECBF_STENCIL, video::SColor(0),1.0f,0);
+            
+            // make cube invisible and set fixed camera as active camera
+            test->setVisible(false);
+            smgr->setActiveCamera(fixedCam);
+            
             
             // draw scene into render target
             
             // set render target texture
-            driver->setRenderTargetEx(renderTarget, video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(0,0,0,255));
-        
-            // make cube invisible and set fixed camera as active camera
-            test->setVisible(false);
-            smgr->setActiveCamera(fixedCam);
-        
+            driver->setRenderTargetEx(renderTarget, video::ECBF_COLOR | video::ECBF_DEPTH | video::ECBF_STENCIL, video::SColor(0,0,0,255), 1.0f, 0);
+            
+            glEnable(GL_STENCIL_TEST);
+            glStencilMask(0xFF);
+            
+            glClearStencil(0);
+            glClear(GL_STENCIL_BUFFER_BIT);
+            
+            glStencilFunc(GL_ALWAYS, 0xFF, 1);
+            glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);   // always write whatever
+            
+            
+            
+            // set render target texture
+            driver->setRenderTargetEx(renderTarget, video::ECBF_COLOR | video::ECBF_DEPTH | video::ECBF_STENCIL, video::SColor(0,0,0,255), 1.0f, 0);
+            
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            
+            // render sprite panel into depth and stencil buffers
             sprite.render();
+            
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+            
+            // reset stencil functions
+            glStencilFunc(GL_EQUAL, 0xFF, 1);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);   // turn off write
             
             // draw whole scene into render buffer
             smgr->drawAll();
             
+            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+            glStencilMask(0x00);
+            glDisable(GL_STENCIL_TEST);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
             
             // set back old render target
             // The buffer might have been distorted, so clear it

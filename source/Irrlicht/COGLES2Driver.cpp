@@ -2458,6 +2458,8 @@ COGLES2Driver::~COGLES2Driver()
 		if (flag & ECBF_STENCIL)
 		{
 			glClearStencil(stencil);
+            glEnable(GL_STENCIL_TEST);
+            glStencilMask(0xFF);
 			mask |= GL_STENCIL_BUFFER_BIT;
 		}
 

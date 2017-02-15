@@ -230,15 +230,25 @@ public:
                 
                 if (IImage::isDepthFormat(textureFormat))
                 {
-                    attachment->attachToCurrentFBOAsDepth();
-                    AssignedDepth = true;
+                    if(textureFormat == ECF_D24S8)
+                    {
+                        attachment->attachToCurrentFBOAsDepth();
+                        attachment->attachToCurrentFBOAsStencil();
+                        AssignedDepth = true;
+                        AssignedStencil = true;
+                    }
+                    else
+                    {
+                        attachment->attachToCurrentFBOAsDepth();
+                        AssignedDepth = true;
+                    }
                 }
                 else if (AssignedDepth)
                 {
                     attachment->detachFromCurrentFBOAsDepth();
                     AssignedDepth = false;
                 }
-                
+               /**
                 if (textureFormat == ECF_D24S8)
                 {
                     attachment->attachToCurrentFBOAsStencil();
@@ -248,7 +258,7 @@ public:
                     attachment->detachFromCurrentFBOAsStencil();
                     AssignedStencil = false;
                 }
-
+*/
 				RequestDepthStencilUpdate = false;
 			}
 

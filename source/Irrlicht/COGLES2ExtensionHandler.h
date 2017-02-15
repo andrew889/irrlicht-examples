@@ -312,6 +312,7 @@ namespace video
         inline void irrGlFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
         {
             glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+            
         }
 
 		inline void irrGlGenerateMipmap(GLenum target)

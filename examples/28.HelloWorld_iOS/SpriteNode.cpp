@@ -16,6 +16,8 @@ using namespace video;
 SpriteNode::SpriteNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, f32 size, irr::core::vector2df centerOffset)
     : scene::ISceneNode(parent, mgr)
 {
+    Material.MaterialType = EMT_SOLID;
+    
     Material.MaterialType = EMT_TRANSPARENT_ALPHA_CHANNEL;
     Material.Wireframe = false;
     Material.Lighting = false;
@@ -30,10 +32,10 @@ SpriteNode::SpriteNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, f32
     
     // get height via width and ratio and replace the 0.5s below
     
-    Vertices[0].Pos = core::vector3df(0.5,  0.5,  0); // top right
-    Vertices[1].Pos = core::vector3df(0.5,  -0.5,  0); // bottom right
-    Vertices[2].Pos = core::vector3df(-0.5,  0.5,  0); // top left
-    Vertices[3].Pos = core::vector3df(-0.5,  -0.5,  0); // bottom left
+    Vertices[0].Pos = core::vector3df(0.5,  0.5,  0.0); // top right
+    Vertices[1].Pos = core::vector3df(0.5,  -0.5,  0.0); // bottom right
+    Vertices[2].Pos = core::vector3df(-0.5,  0.5,  0.0); // top left
+    Vertices[3].Pos = core::vector3df(-0.5,  -0.5,  0.0); // bottom left
     
     // 1 unit = width of the screen/player
     // give this class both a width and a ratio to get size
@@ -89,20 +91,11 @@ void SpriteNode::render()
     driver->setMaterial(Material);
     driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
     
-//    glEnable(GL_STENCIL_TEST);
-//    glStencilFunc(GL_ALWAYS, 1, 0xFF);
-//    glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
-//    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-//    glStencilMask(0xFF);
-//    glClearStencil(200);
-//    glClear(GL_STENCIL_BUFFER_BIT);
+   
     
     driver->drawIndexedTriangleList(&Vertices[0], 4, &indices[0], 2);
     
-//    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-//    glStencilMask(0x00);
-////    glDisable(GL_STENCIL_TEST);
-//    glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
+    
 }
 
 /*
